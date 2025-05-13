@@ -1,0 +1,32 @@
+kind: pipeline
+type: docker
+name: deploy-to-ecs
+
+steps:
+  - name: build image
+    image: docker
+    commands:
+      - docker build -t cicd .
+      - docker tag cicd:latest 322270498981.dkr.ecr.ca-central-1.amazonaws.com/cicd:latest # 更新為你的 ECR URL
+
+  - name: push to ECR
+    image: amazon/aws-cli
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: aws_access_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: aws_secret_access_key
+    commands:
+      - aws --version
+      - aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin 322270498981.dkr.ecr.ca-central-1.amazonaws.com
+      - docker push 322270498981.dkr.ecr.ca-central-1.amazonaws.com/cicd:latest # 更新為你的 ECR URL
+
+  - name: deploy to ECS
+    image: amazon/aws-cli
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: aws_access_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: aws_secret_access_key
+    commands:
+      - aws ecs update-service --cluster CiCdCluster --service CiCdTask-Service --force-new-deployment --region ca-central-1 # 更新區域
