@@ -3,6 +3,14 @@ type: docker
 name: deploy-to-ecs
 
 steps:
+  - name: notify slack
+    image: curlimages/curl
+    environment:
+      SLACK_WEBHOOK_URL:
+        from_secret: slack_webhook_url
+    commands:
+      - |
+        curl -X POST -H 'Content-type: application/json' --data '{"text":"Push to google-docs-clone Repo"}' $SLACK_WEBHOOK_URL
   - name: build image
     image: docker
     commands:
