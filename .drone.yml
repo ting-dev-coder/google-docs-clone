@@ -40,7 +40,7 @@
 #       - aws ecs update-service --cluster CiCdCluster --service CiCdTask-Service --force-new-deployment --region ca-central-1 # 更新區域
 kind: pipeline
 type: docker
-name: default
+name: test
 
 steps:
   - name: test
