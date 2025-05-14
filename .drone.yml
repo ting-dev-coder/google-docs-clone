@@ -1,11 +1,19 @@
-# .drone.yml
 kind: pipeline
-type: docker
 name: default
 
 steps:
-  - name: hello
-    image: alpine
+  - name: build
+    image: node:16
     commands:
-      - echo "Hello from Drone CI 🎉"
-      - uname -a
+      - npm install
+      - npm run build
+
+  - name: deploy
+    image: appleboy/drone-ssh
+    settings:
+      host: 3.96.217.145 # 使用你的 EC2 公有 IP
+      username: ubuntu
+      key:
+        from_secret: ssh_key # 你可以使用 Drone secrets 保存這個 SSH 私鑰
+      port: 22
+      target: /home/ubuntu/app # 部署目標目錄
