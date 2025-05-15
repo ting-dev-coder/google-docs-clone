@@ -3,7 +3,7 @@ name: default
 
 steps:
   - name: build
-    image: node:16
+    image: node:18.18.0
     commands:
       - npm install --legacy-peer-deps
       - npm run build
