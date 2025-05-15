@@ -5,8 +5,8 @@ steps:
   - name: build
     image: node:18.18.0
     commands:
-      - npm install --legacy-peer-deps
-      - npm run build
+      - yarn
+      - yarn build
 
   - name: deploy
     image: appleboy/drone-ssh

@@ -11,7 +11,7 @@ interface ToolbarButton {
 	icon: LucideIcon;
 }
 
-function FontFamilyButton() {}
+// function FontFamilyButton() {}
 
 function ToolbarButton({ onClick, isActive, icon: Icon }: ToolbarButton) {
 	return (
