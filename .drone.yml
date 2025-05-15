@@ -1,19 +1,69 @@
 kind: pipeline
-name: default
+type: ssh
+name: deploy-google-docs-clone
+
+trigger:
+  status:
+    - success
+    - failure
 
 steps:
-  - name: build
-    image: node:16
-    commands:
-      - npm install
-      - npm run build
+  - name: deploy-nextjs
+    ssh:
+      host: 3.96.217.145
+      user: ubuntu
+      script:
+        - cd ~/google-docs-clone
+        - git pull origin main
+        - npm ci
+        - npm run build
+        - pm2 describe google-docs-clone || pm2 start npm --name google-docs-clone -- start
+        - pm2 reload google-docs-clone
 
-  - name: deploy
-    image: appleboy/drone-ssh
+---
+kind: pipeline
+type: docker
+name: slack-success
+
+trigger:
+  status:
+    - success
+
+steps:
+  - name: notify success
+    image: plugins/slack
     settings:
-      host: 3.96.217.145 # 使用你的 EC2 公有 IP
-      username: ubuntu
-      key:
-        from_secret: ssh_key # 你可以使用 Drone secrets 保存這個 SSH 私鑰
-      port: 22
-      target: /home/ubuntu/app # 部署目標目錄
+      webhook:
+        from_secret: SLACK_WEBHOOK_URL
+      channel: "#cicd"
+      username: "Drone CI"
+      text: |
+        ✅ *部署成功！*
+        - 專案：`google-docs-clone`
+        - 分支：`${DRONE_BRANCH}`
+        - 作者：`${DRONE_COMMIT_AUTHOR}`
+        - 時間：`${DRONE_BUILD_FINISHED}`
+
+---
+kind: pipeline
+type: docker
+name: slack-failure
+
+trigger:
+  status:
+    - failure
+
+steps:
+  - name: notify failure
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: SLACK_WEBHOOK_URL
+      channel: "#cicd"
+      username: "Drone CI"
+      text: |
+        ❌ *部署失敗！*
+        - 專案：`google-docs-clone`
+        - 分支：`${DRONE_BRANCH}`
+        - 作者：`${DRONE_COMMIT_AUTHOR}`
+        - 時間：`${DRONE_BUILD_FINISHED}`
