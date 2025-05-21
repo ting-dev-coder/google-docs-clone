@@ -11,7 +11,7 @@ steps:
   - name: deploy
     image: appleboy/drone-scp
     settings:
-      host: 3.96.217.145
+      host: 3.96.197.221
       username: ubuntu
       key:
         from_secret: ssh_key
@@ -22,7 +22,7 @@ steps:
   - name: restart-server
     image: appleboy/drone-ssh
     settings:
-      host: 3.96.217.145
+      host: 3.96.197.221
       username: ubuntu
       key:
         from_secret: ssh_key
