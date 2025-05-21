@@ -9,11 +9,23 @@ steps:
       - yarn build
 
   - name: deploy
-    image: appleboy/drone-ssh
+    image: appleboy/drone-scp
     settings:
-      host: 3.96.217.145 # 使用你的 EC2 公有 IP
+      host: 3.96.217.145
       username: ubuntu
       key:
-        from_secret: ssh_key # 你可以使用 Drone secrets 保存這個 SSH 私鑰
+        from_secret: ssh_key
       port: 22
-      target: /home/ubuntu/app # 部署目標目錄
+      source: build/** # 傳送 build 出來的檔案
+      target: /home/ubuntu/app # EC2 目標目錄
+
+  - name: restart-server
+    image: appleboy/drone-ssh
+    settings:
+      host: 3.96.217.145
+      username: ubuntu
+      key:
+        from_secret: ssh_key
+      port: 22
+      script:
+        - sudo systemctl restart nginx # 或者你的其他部署方式
