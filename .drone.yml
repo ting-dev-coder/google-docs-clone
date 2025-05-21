@@ -16,7 +16,7 @@ steps:
       key:
         from_secret: ssh_key
       port: 22
-      source: build/** # 傳送 build 出來的檔案
+      source: out/** # 傳送 build 出來的檔案
       target: /home/ubuntu/app # EC2 目標目錄
 
   - name: restart-server
