@@ -1,3 +1,35 @@
+# kind: pipeline
+# name: default
+
+# steps:
+#   - name: build
+#     image: node:18.18.0
+#     commands:
+#       - yarn
+#       - yarn build
+
+#   - name: deploy
+#     image: appleboy/drone-scp
+#     settings:
+#       host: 3.96.197.221
+#       username: ubuntu
+#       key:
+#         from_secret: ssh_key
+#       port: 22
+#       source: ./jira-clone # 傳送 build 出來的檔案
+#       target: /home/ubuntu/app # EC2 目標目錄
+
+#   - name: restart-server
+#     image: appleboy/drone-ssh
+#     settings:
+#       host: 3.96.197.221
+#       username: ubuntu
+#       key:
+#         from_secret: ssh_key
+#       port: 22
+#       script:
+#         - sudo systemctl restart nginx # 或者你的其他部署方式
+
 kind: pipeline
 name: default
 
@@ -5,7 +37,7 @@ steps:
   - name: build
     image: node:18.18.0
     commands:
-      - yarn
+      - yarn install
       - yarn build
 
   - name: deploy
@@ -16,10 +48,16 @@ steps:
       key:
         from_secret: ssh_key
       port: 22
-      source: ./jira-clone # 傳送 build 出來的檔案
-      target: /home/ubuntu/app # EC2 目標目錄
+      strip_components: 0
+      target: /home/ubuntu/app/jira-clone
+      source:
+        - .next/
+        - public/
+        - package.json
+        - yarn.lock
+        - next.config.js
 
-  - name: restart-server
+  - name: restart-app
     image: appleboy/drone-ssh
     settings:
       host: 3.96.197.221
@@ -28,4 +66,7 @@ steps:
         from_secret: ssh_key
       port: 22
       script:
-        - sudo systemctl restart nginx # 或者你的其他部署方式
+        - cd /home/ubuntu/app/jira-clone
+        - yarn install --production
+        - pm2 restart jira-clone || pm2 start yarn --name "jira-clone" -- start --port 3001
+        - sudo systemctl reload nginx
