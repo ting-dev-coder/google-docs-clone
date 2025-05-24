@@ -5,7 +5,6 @@ steps:
   - name: build
     image: node:18.18.0
     commands:
-      - cd jira-clone
       - yarn install
       - yarn build
 
@@ -20,11 +19,11 @@ steps:
       strip_components: 0
       target: /home/ubuntu/app/jira-clone
       source:
-        - jira-clone/.next/
-        - jira-clone/public/
-        - jira-clone/package.json
-        - jira-clone/yarn.lock
-        - jira-clone/next.config.js
+        - .next/
+        - public/
+        - package.json
+        - yarn.lock
+        - next.config.js
 
   - name: restart-app
     image: appleboy/drone-ssh
