@@ -1,9 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-	basePath: "/jira-clone", // 這裡是用來改網站基底路徑（替代 homepage）
-	assetPrefix: "/jira-clone/", // 靜態資源路徑前綴,
+	basePath: "/jira-clone",
+	assetPrefix: "/jira-clone/",
 	trailingSlash: true,
+	// 確保圖片能正常載入
+	images: {
+		unoptimized: false, // SSR 模式可以使用優化
+	},
 };
 
 export default nextConfig;
