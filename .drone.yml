@@ -8,7 +8,7 @@ steps:
       - yarn install
       - yarn build
 
-  - name: deploy
+  - name: upload-files
     image: appleboy/drone-scp
     settings:
       host: 3.96.197.221
@@ -24,7 +24,8 @@ steps:
         - package.json
         - yarn.lock
         - next.config.js
-        # 不拷貝 node_modules，讓 EC2 用 yarn install --production 補齊
+        - ecosystem.config.js
+        - .env.production
 
   - name: restart-app
     image: appleboy/drone-ssh
@@ -36,8 +37,7 @@ steps:
       port: 22
       script:
         - cd /home/ubuntu/app/jira-clone
-        - yarn install --production # 在伺服器上安裝生產依賴
-        - pm2 delete jira-clone || true # 刪除舊程序
-        - pm2 start "npx next start -p 3001" --name jira-clone # 直接用 next start 啟動且帶 port
-        - sleep 5
+        - yarn install --production
+        - pm2 delete jira-clone || true
+        - pm2 start ecosystem.config.js --env production
         - sudo systemctl reload nginx
