@@ -11,7 +11,7 @@ steps:
   - name: upload-files
     image: appleboy/drone-scp
     settings:
-      host: 3.96.197.221
+      host: 15.223.115.159
       username: ubuntu
       key:
         from_secret: ssh_key
@@ -30,7 +30,7 @@ steps:
   - name: restart-app
     image: appleboy/drone-ssh
     settings:
-      host: 3.96.197.221
+      host: 15.223.115.159
       username: ubuntu
       key:
         from_secret: ssh_key
