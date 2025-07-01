@@ -38,7 +38,7 @@ steps:
         from_secret: aws_dev_host
       port:
         from_secret: aws_dev_port
-      username: ec2-user
+      username: ubuntu
       ssh_key:
         from_secret: drone_ssh_key
       script:
