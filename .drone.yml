@@ -21,7 +21,7 @@ steps:
       secret_key:
         from_secret: aws_secret_access_key
       region: ap-northeast-1
-      registry: 381492122645.dkr.ecr.ap-northeast-1.amazonaws.com
+      registry: 322270498981.dkr.ecr.ap-northeast-1.amazonaws.com
       repo: google-docs-clone-dev
       dockerfile: Dockerfile
       tags:
@@ -60,6 +60,7 @@ steps:
         
         Commit: <{{ build.link }}|{{ truncate build.commit 8 }}>
 
+
     when:
       branch:
         - dev
@@ -76,6 +77,7 @@ steps:
         ❌ Build #{{ build.number }} (dev) failed!
         
         Commit: <{{ build.link }}|{{ truncate build.commit 8 }}>
+
 
     when:
       branch:
