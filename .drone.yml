@@ -16,10 +16,10 @@ steps:
   - name: Build & Push to ECR
     image: plugins/ecr
     environment:
-    AWS_ACCESS_KEY_ID:
-      from_secret: aws_access_key_id
-    AWS_SECRET_ACCESS_KEY:
-      from_secret: aws_secret_access_key
+      AWS_ACCESS_KEY_ID:
+        from_secret: aws_access_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: aws_secret_access_key
     settings:
       access_key:
         from_secret: aws_access_key_id
@@ -38,6 +38,11 @@ steps:
 
   - name: Deploy to EC2
     image: appleboy/drone-ssh
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: aws_access_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: aws_secret_access_key
     settings:
       host:
         from_secret: aws_dev_host
@@ -66,7 +71,6 @@ steps:
         
         Commit: <{{ build.link }}|{{ truncate build.commit 8 }}>
 
-
     when:
       branch:
         - dev
@@ -83,7 +87,6 @@ steps:
         ❌ Build #{{ build.number }} (dev) failed!
         
         Commit: <{{ build.link }}|{{ truncate build.commit 8 }}>
-
 
     when:
       branch:
