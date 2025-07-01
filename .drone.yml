@@ -49,14 +49,14 @@ steps:
       branch:
         - dev
 
-  - name: Notify - Done
+  - name: Notify - Success
     image: plugins/slack
     settings:
       webhook:
         from_secret: slack_webhook
       username: Drone CI
       template: >
-        ✅ Build #{{ build.number }} (dev) completed.
+        ✅ Build #{{ build.number }} (dev) succeeded!
         
         Commit: <{{ build.link }}|{{ truncate build.commit 8 }}>
 
@@ -65,4 +65,20 @@ steps:
         - dev
       status:
         - success
+
+  - name: Notify - Failure
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_webhook
+      username: Drone CI
+      template: >
+        ❌ Build #{{ build.number }} (dev) failed!
+        
+        Commit: <{{ build.link }}|{{ truncate build.commit 8 }}>
+
+    when:
+      branch:
+        - dev
+      status:
         - failure
