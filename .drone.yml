@@ -51,14 +51,14 @@ steps:
       username: ubuntu
       ssh_key:
         from_secret: drone_ssh_key
+      envs:
+        - AWS_ACCESS_KEY_ID
+        - AWS_SECRET_ACCESS_KEY
       script:
         - echo "🧨 Deploying google-docs-clone (dev)..."
         - aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin 322270498981.dkr.ecr.ca-central-1.amazonaws.com
         - cd /opt/deploy/google-docs-clone
         - ./run.sh dev ${DRONE_BUILD_NUMBER}
-    when:
-      branch:
-        - dev
 
   - name: Notify - Success
     image: plugins/slack
@@ -70,6 +70,7 @@ steps:
         ✅ Build #{{ build.number }} (dev) succeeded!
         
         Commit: <{{ build.link }}|{{ truncate build.commit 8 }}>
+
 
     when:
       branch:
@@ -87,6 +88,7 @@ steps:
         ❌ Build #{{ build.number }} (dev) failed!
         
         Commit: <{{ build.link }}|{{ truncate build.commit 8 }}>
+
 
     when:
       branch:
